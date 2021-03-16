@@ -43,7 +43,7 @@ class PlayScene extends Phaser.Scene {
         'spaceship'
       )
       .setOrigin(0);
-    this.spaceship.body.gravity.y = 400;
+    this.spaceship.body.gravity.y = 600;
     this.spaceship.setCollideWorldBounds(true);
   }
 

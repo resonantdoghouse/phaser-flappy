@@ -103,11 +103,15 @@ class PlayScene extends Phaser.Scene {
   };
 
   gameOver() {
-    // this.spaceship.x = this.initialSpaceshipPosition.x;
-    // this.spaceship.y = this.initialSpaceshipPosition.y;
-    // this.spaceship.body.velocity.y = 0;
     this.physics.pause();
     this.spaceship.setTint(0xee4824);
+    this.time.addEvent({
+      delay: 1000,
+      callback: () => {
+        this.scene.restart();
+      },
+      loop: false,
+    });
   }
 
   placePipe(uPipe, lPipe) {

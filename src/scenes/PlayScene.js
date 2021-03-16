@@ -36,19 +36,28 @@ class PlayScene extends Phaser.Scene {
   }
 
   createSpaceship() {
-    this.spaceship = this.physics.add.sprite(
-      this.config.startPosition.x,
-      this.config.startPosition.y,
-      'spaceship'
-    );
+    this.spaceship = this.physics.add
+      .sprite(
+        this.config.startPosition.x,
+        this.config.startPosition.y,
+        'spaceship'
+      )
+      .setOrigin(0);
     this.spaceship.body.gravity.y = 400;
+    this.spaceship.setCollideWorldBounds(true);
   }
 
   createPipes() {
     this.pipes = this.physics.add.group();
     for (let i = 0; i < PIPES_TO_RENDER; i++) {
-      const uPipe = this.pipes.create(0, 0, 'pipe').setOrigin(0, 1);
-      const lPipe = this.pipes.create(0, 0, 'pipe').setOrigin(0, 0);
+      const uPipe = this.pipes
+        .create(0, 0, 'pipe')
+        .setImmovable(true)
+        .setOrigin(0, 1);
+      const lPipe = this.pipes
+        .create(0, 0, 'pipe')
+        .setImmovable(true)
+        .setOrigin(0, 0);
       this.placePipe(uPipe, lPipe);
     }
     this.pipes.setVelocityX(-200);
@@ -94,9 +103,11 @@ class PlayScene extends Phaser.Scene {
   };
 
   gameOver() {
-    this.spaceship.x = this.initialSpaceshipPosition.x;
-    this.spaceship.y = this.initialSpaceshipPosition.y;
-    this.spaceship.body.velocity.y = 0;
+    // this.spaceship.x = this.initialSpaceshipPosition.x;
+    // this.spaceship.y = this.initialSpaceshipPosition.y;
+    // this.spaceship.body.velocity.y = 0;
+    this.physics.pause();
+    this.spaceship.setTint(0xee4824);
   }
 
   placePipe(uPipe, lPipe) {
@@ -119,8 +130,8 @@ class PlayScene extends Phaser.Scene {
 
   checkGameStatus() {
     if (
-      this.spaceship.y > this.config.height ||
-      this.spaceship.y < -this.spaceship.height
+      this.spaceship.getBounds().bottom >= this.config.height ||
+      this.spaceship.y <= 0
     ) {
       this.gameOver();
     }

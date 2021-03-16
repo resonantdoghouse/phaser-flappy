@@ -27,6 +27,7 @@ class PlayScene extends Phaser.Scene {
     this.createBG();
     this.createSpaceship();
     this.createPipes();
+    this.createColliders();
     this.handleInputs();
   }
 
@@ -51,6 +52,16 @@ class PlayScene extends Phaser.Scene {
       this.placePipe(uPipe, lPipe);
     }
     this.pipes.setVelocityX(-200);
+  }
+
+  createColliders() {
+    this.physics.add.collider(
+      this.spaceship,
+      this.pipes,
+      this.gameOver,
+      null,
+      this
+    );
   }
 
   handleInputs() {
@@ -82,7 +93,7 @@ class PlayScene extends Phaser.Scene {
     });
   };
 
-  restartSpaceshipPosition() {
+  gameOver() {
     this.spaceship.x = this.initialSpaceshipPosition.x;
     this.spaceship.y = this.initialSpaceshipPosition.y;
     this.spaceship.body.velocity.y = 0;
@@ -106,13 +117,18 @@ class PlayScene extends Phaser.Scene {
     lPipe.y = uPipe.y + pipeVerticalDistance;
   }
 
-  update() {
+  checkGameStatus() {
     if (
       this.spaceship.y > this.config.height ||
       this.spaceship.y < -this.spaceship.height
     ) {
-      this.restartSpaceshipPosition();
+      this.gameOver();
     }
+  }
+
+  // update method, runs roughly 60 times per second
+  update() {
+    this.checkGameStatus();
     this.recyclePipes();
   }
 }

@@ -1,11 +1,11 @@
 // @ts-nocheck
-import Phaser from 'phaser';
+import BaseScene from './BaseScene';
 const PIPES_TO_RENDER = 4;
 
-class PlayScene extends Phaser.Scene {
+class PlayScene extends BaseScene {
   constructor(config) {
-    super('PlayScene');
-    this.config = config;
+    super('PlayScene', config);
+
     this.flapVelocity = 300;
     this.spaceship = null;
     this.pipes = null;
@@ -20,23 +20,14 @@ class PlayScene extends Phaser.Scene {
     this.scoreText = '';
   }
 
-  preload() {
-    this.load.image('mountains', './assets/img/mountains01_1920x1080_full.png');
-    this.load.image('spaceship', './assets/img/thing.png');
-    this.load.image('pipe', './assets/img/pipe.png');
-  }
-
   create() {
-    this.createBG();
+    super.create();
     this.createSpaceship();
     this.createPipes();
     this.createColliders();
     this.createScore();
+    this.createPause();
     this.handleInputs();
-  }
-
-  createBG() {
-    this.add.image(0, -300, 'mountains').setOrigin(0);
   }
 
   createSpaceship() {
@@ -88,6 +79,19 @@ class PlayScene extends Phaser.Scene {
     this.add.text(16, 52, `Best Score: ${bestScore || 0}`, {
       fontSize: '18px',
       fill: '#000',
+    });
+  }
+
+  createPause() {
+    const pauseButton = this.add
+      .image(this.config.width - 10, this.config.height - 10, 'pause')
+      .setScale(3)
+      .setOrigin(1)
+      .setInteractive();
+
+    pauseButton.on('pointerdown', () => {
+      this.physics.pause();
+      this.scene.pause();
     });
   }
 

@@ -1,6 +1,9 @@
 // @ts-nocheck
 import Phaser from 'phaser';
+import PreloadScene from './scenes/PreloadScene';
 import PlayScene from './scenes/PlayScene';
+import ScoreScene from './scenes/ScoreScene';
+import MenuScene from './scenes/MenuScene';
 
 const WIDTH = 800;
 const HEIGHT = 600;
@@ -12,6 +15,10 @@ const SHARED_CONFIG = {
   startPosition: SPACESHIP_POSITION,
 };
 
+const Scenes = [PreloadScene, MenuScene, PlayScene, ScoreScene];
+const createScene = (Scene) => new Scene(SHARED_CONFIG);
+const initScenes = () => Scenes.map(createScene);
+
 const config = {
   type: Phaser.AUTO,
   ...SHARED_CONFIG,
@@ -19,10 +26,9 @@ const config = {
     default: 'arcade',
     arcade: {
       debug: true,
-      // gravity: { y: 300 },
     },
   },
-  scene: [new PlayScene(SHARED_CONFIG)],
+  scene: initScenes(),
 };
 
 export default new Phaser.Game(config);

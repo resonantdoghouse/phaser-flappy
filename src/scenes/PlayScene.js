@@ -15,6 +15,9 @@ class PlayScene extends Phaser.Scene {
     };
     this.pipeVerticalDistanceRange = [150, 250];
     this.pipeHorizontalDistanceRange = [500, 550];
+
+    this.score = 0;
+    this.scoreText = '';
   }
 
   preload() {
@@ -28,6 +31,7 @@ class PlayScene extends Phaser.Scene {
     this.createSpaceship();
     this.createPipes();
     this.createColliders();
+    this.createScore();
     this.handleInputs();
   }
 
@@ -73,6 +77,20 @@ class PlayScene extends Phaser.Scene {
     );
   }
 
+  createScore() {
+    this.score = 0;
+    const bestScore = localStorage.getItem('bestScore');
+    this.scoreText = this.add.text(16, 16, `Score: ${this.score}`, {
+      fontSize: '32px',
+      fill: '#000',
+    });
+
+    this.add.text(16, 52, `Best Score: ${bestScore || 0}`, {
+      fontSize: '18px',
+      fill: '#000',
+    });
+  }
+
   handleInputs() {
     this.input.on('pointerdown', this.flap, this);
     this.input.keyboard.on('keydown_SPACE', this.flap, this);
@@ -80,6 +98,11 @@ class PlayScene extends Phaser.Scene {
 
   flap() {
     this.spaceship.body.velocity.y = -this.flapVelocity;
+  }
+
+  increaseScore() {
+    this.score += 1;
+    this.scoreText.setText(`Score: ${this.score}`);
   }
 
   getRightMostPipe() {
@@ -97,14 +120,27 @@ class PlayScene extends Phaser.Scene {
         tempPipes.push(pipe);
         if (tempPipes.length === 2) {
           this.placePipe(...tempPipes);
+          this.increaseScore();
+          this.saveBestScore();
         }
       }
     });
   };
 
+  saveBestScore() {
+    const bestScoreText = localStorage.getItem('bestScore');
+    const bestScore = bestScoreText && parseInt(bestScoreText, 10);
+    if (!bestScore || this.score > bestScore) {
+      localStorage.setItem('bestScore', this.score);
+    }
+  }
+
   gameOver() {
     this.physics.pause();
     this.spaceship.setTint(0xee4824);
+
+    this.saveBestScore();
+
     this.time.addEvent({
       delay: 1000,
       callback: () => {
